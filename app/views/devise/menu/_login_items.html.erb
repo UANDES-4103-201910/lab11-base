@@ -1,0 +1,12 @@
+<% if user_signed_in? %>
+  <li>
+    Welcome, <%=current_user.name%> [<%=current_user.email%> <%=" - Administrator" if current_user.admin? %>]
+  </li>
+  <li>
+    <%= link_to('Logout', destroy_user_session_path, method: :get) %>
+  </li>
+<% else %>
+  <li>
+    <%= link_to('Login', new_user_session_path) %>
+  </li>
+<% end %>

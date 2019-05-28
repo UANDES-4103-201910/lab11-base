@@ -5,22 +5,17 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-users = [User.new(name:'Claudio', lastname:'Alvarez', \
-              password:'123456', email:'calvarez1@miuandes.cl', \
+users = [User.new(name:'Administrator', lastname:'User', \
+              password:'123456', email:'admin@uandes.cl', \
+              role:'administrator',
               address:'San Carlos de Apoquindo'), 
-         User.new(name:'Juan', lastname:'Rataplan', \
-              password:'123456', email:'jrataplan@miuandes.cl', \
+         User.new(name:'Registered', lastname:'User', \
+              password:'123456', email:'reguser@miuandes.cl', \
               address:'San Carlos de Apoquindo'),
-         User.new(name:'Raul', lastname:'Rabufetti', \
-              password:'123456', email:'rrabufetti@miuandes.cl', \
-              address:'San Carlos de Apoquindo'),
-         User.new(name:'Raul', lastname:'Ganfolfi', \
-              password:'123456', email:'rgandolfi@miuandes.cl', \
-              address:'San Carlos de Apoquindo'),
-         User.new(name:'Licenciado', lastname:'Varela', \
-              password:'123456', email:'lvarela@miuandes.cl', \
+         User.new(name:'Registered', lastname:'User 2', \
+              password:'123456', email:'reguser2@miuandes.cl', \
               address:'San Carlos de Apoquindo')]
-              
+
 for u in users do
   u.save!
 end 
@@ -34,11 +29,11 @@ for ev in event_venues do
 end 
 
 events = [Event.new(name:'Festival de la Cancion', description: 'Puro reggaeton',\
-          start_date: '2019-03-01', event_venue: event_venues[0]),
+          start_date: '2019-09-01', event_venue: event_venues[0]),
           Event.new(name:'Twisted Sister', description: 'Puro rock',\
-          start_date: '2019-04-01', event_venue: event_venues[1]),
+          start_date: '2019-10-01', event_venue: event_venues[1]),
           Event.new(name:'Bad Bunny', description: 'Puro Trap',\
-          start_date: '2019-05-01', event_venue: event_venues[2])]
+          start_date: '2019-11-01', event_venue: event_venues[2])]
 
 for e in events do
   e.save!

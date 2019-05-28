@@ -1,0 +1,31 @@
+<h1>Welcome to TicketTopia</h1>
+
+<p>Tickets for the following events are currently available:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Lugar</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+
+  <tbody>
+  <% @events.each do |event| %>
+    <tr>
+      <td><%= link_to event.name, event %></td>
+      <td><%=event.description%></td>
+      <td><%=event.event_venue.name%></td>
+      <td><%=event.start_date.in_time_zone()%></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<% if can? :create, Event %>
+<%= link_to 'New Event', new_event_path %>
+<% end %>
