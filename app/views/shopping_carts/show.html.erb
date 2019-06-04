@@ -1,0 +1,44 @@
+<h1>Your cart</h1>
+
+<%if !shopping_cart_empty? %>
+<p>Your cart contains the following tickets. You may edit ticket quantities before placing your order.</p>
+
+<table>
+  <thead>
+  <tr>
+    <th>Event</th>
+    <th>Date</th>
+    <th>Ticket Zone</th>
+    <th>Price</th>
+    <th>Amount</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @required_tickets.each do |k,v| %>
+    <tr id="<%="details_#{k.id}_"%>">
+      <td><%=k.event.name %></td>
+      <td><%=k.event.start_date %></td>
+      <td><%=k.ticket_zone.zone%></td>
+      <td><%=k.price%></td>
+      <td><%=text_field_tag('amount', value = v, :data => {ticket_type_id: k.id, amount: v}, class: 'ticket_amount')%></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td colspan="4">
+      Order total:
+    </td>
+    <td>
+      <span id="order_total">
+        <%=@total%>
+      </span>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="actions">
+  <%= button_to 'Checkout Order', '/checkout', method: 'get' %>
+</div>
+<% else %>
+<p>Your cart is empty.</p>
+<% end%>

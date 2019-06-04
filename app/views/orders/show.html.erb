@@ -1,0 +1,85 @@
+<h1>Your Order, id: <%=@order.id%>, date: <%=@order.created_at%></h1>
+
+<h3>Tickets purchased</h3>
+
+<table>
+  <thead>
+  <tr>
+    <th>Event</th>
+    <th>Date</th>
+    <th>Ticket Zone</th>
+    <th>Price</th>
+    <th>Amount</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @order_summary.each do |k,v| %>
+    <tr>
+      <td><%=k.event.name %></td>
+      <td><%=k.event.start_date %></td>
+      <td><%=k.ticket_zone.zone%></td>
+      <td><%=k.price%></td>
+      <td><%=v%></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td colspan="4">
+      Order total:
+    </td>
+    <td>
+      <span id="order_total">
+        <%=@order.total%>
+      </span>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>Delivery information</h3>
+<table>
+  <tbody>
+    <tr>
+      <th>
+        Recipient name
+      </th>
+      <td>
+        <%=@order.delivery_address.recipient_fullname %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        Address Line 1
+      </th>
+      <td>
+        <%=@order.delivery_address.line1 %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        Address Line 2
+      </th>
+      <td>
+        <%=@order.delivery_address.line2 %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        City
+      </th>
+      <td>
+        <%=@order.delivery_address.city %>
+      </td>
+    </tr>
+    <tr>
+      <th>
+        Country
+      </th>
+      <td>
+        <%=@order.delivery_address.country %>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+<%= link_to 'Home', root_path %>

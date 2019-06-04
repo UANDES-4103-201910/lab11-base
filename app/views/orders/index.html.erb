@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Orders</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Date</th>
+      <th>Number of tickets</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr>
+        <td><%= link_to order.id, order %></td>
+        <td><%= order.created_at %></td>
+        <td><%= order.tickets.length %></td>
+        <td><%= order.total %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

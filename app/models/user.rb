@@ -6,7 +6,7 @@ class User < ApplicationRecord
   has_many :orders
 
   def admin?
-    if self.role == 'admin'
+    if self.role == 'administrator'
       return true
     end
     return false

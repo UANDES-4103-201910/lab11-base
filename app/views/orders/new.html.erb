@@ -1,0 +1,68 @@
+
+<h1>Checkout your order!</h1>
+
+<p>Your order contains the following tickets:</p>
+
+<table>
+  <thead>
+  <tr>
+    <th>Event</th>
+    <th>Date</th>
+    <th>Ticket Zone</th>
+    <th>Price</th>
+    <th>Amount</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @required_tickets.each do |k,v| %>
+    <tr id="<%="details_#{k.id}_"%>">
+      <td><%=k.event.name %></td>
+      <td><%=k.event.start_date %></td>
+      <td><%=k.ticket_zone.zone%></td>
+      <td><%=k.price%></td>
+      <td><%=v%></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td colspan="4">
+      Order total:
+    </td>
+    <td>
+      <span id="order_total">
+        <%=@order.get_order_total()%>
+      </span>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<p>Please provide shipping details:</p>
+<%=form_with(model: @order, local: true) do |form|%>
+  <% if @order.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@order.errors.count, "error") %> prohibited this event from being saved:</h2>
+      <ul>
+        <% @order.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <%=form.fields_for :delivery_address do |address_form| %>
+    <%= address_form.label :recipient_fullname%>
+    <%= address_form.text_field :recipient_fullname %>
+    <%= address_form.label :line1 %>
+    <%= address_form.text_field :line1 %>
+    <%= address_form.label :line2 %>
+    <%= address_form.text_field :line2 %>
+    <%= address_form.label :city %>
+    <%= address_form.text_field :city %>
+    <%= address_form.label :country %>
+    <%= address_form.text_field :country %>
+  <% end %>
+  <div class="actions">
+  <%= form.submit 'Submit order' %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', orders_path %>
