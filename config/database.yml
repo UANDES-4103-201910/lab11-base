@@ -1,9 +1,6 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: <%= ENV['DATABASE_HOST'] %> 
-  username: <%= ENV['DATABASE_USERNAME'] %> 
-  password: <%= ENV['DATABASE_PASSWORD'] %>
   pool: 5
 
 development:
@@ -14,9 +11,11 @@ development:
 
 production:
   <<: *default
-  database: myapp_development
+  database: ticket_topia_production
+  username: prod_db_user    
+  password: <%= ENV[‘DATABASE_PASSWORD’] %>
+  socket: “/cloudsql/project_id:us-central1:photo-album-production”   
 
 test:
   <<: *default
-  database: myapp_test
-
+  database: ticket_topia_test

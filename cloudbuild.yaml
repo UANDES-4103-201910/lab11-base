@@ -1,0 +1,30 @@
+steps:
+
+# Decrypt Rails Master key file
+- name: gcr.io/cloud-builders/gcloud
+  args: ["kms", "decrypt", "--ciphertext-file=./config/master.key.enc", 
+         "--plaintext-file=./config/master.key",
+         "--location=us-central1","--keyring=ticket-topia", 
+        "--key=rails_master_key"]
+
+# Decrypt Ticket Topia service account credentials
+- name: gcr.io/cloud-builders/gcloud
+  args: ["kms", "decrypt", "--ciphertext-file=./config/ticket_topia_runner.key.enc", 
+         "--plaintext-file=./config/ticket_topia_runner.key",
+         "--location=us-central1","--keyring=ticket-topia", 
+         "--key=ticket_topia_runner_key"]
+
+# Build image with tag 'latest' and pass decrypted Rails DB password as argument
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--tag', 'gcr.io/$PROJECT_ID/ticket_topia:latest', 
+         '--build-arg', 'DB_PWD', '.']
+  secretEnv: ['DB_PWD']
+
+# Push new image to Google Cloud Registry       
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/ticket_topia:latest']
+
+secrets:
+- kmsKeyName: projects/project_id/locations/us-central1/keyRings/ticket-topia/cryptoKeys/db_pwd_key
+  secretEnv:
+    DB_PWD: "your_encrypted_production_database_password_here"

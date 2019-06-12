@@ -1,29 +1,48 @@
-FROM ruby:2.5.5 
-MAINTAINER calvarez1@miuandes.cl
+# Leverage the official Ruby image from Docker Hub
+# https://hub.docker.com/_/ruby
+FROM ruby:2.5
 
-RUN apt-get update && apt-get install -y \ 
-  build-essential \ 
-  nodejs \
-  postgresql-client
+# Install recent versions of nodejs (10.x) and yarn pkg manager
+# Needed to properly pre-compile Rails assets
+RUN (curl -sL https://deb.nodesource.com/setup_10.x | bash -) && apt-get update && apt-get install -y nodejs 
 
-RUN mkdir -p /app 
-WORKDIR /app
+RUN (curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -) && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && apt-get install -y yarn
 
-COPY Gemfile Gemfile.lock ./ 
-RUN gem install bundler && bundle install --jobs 20 --retry 5
+# Install PostgreSQL client (needed for the connection to Google CloudSQL instance)
+RUN apt-get install -y postgresql-client
 
-COPY . ./
+# Install production dependencies (Gems installation in
+# local vendor directory)
+WORKDIR /usr/src/app
+COPY Gemfile Gemfile.lock ./
+ENV BUNDLE_FROZEN=true
+RUN bundle install
 
-# Add a script to be executed every time the container starts.
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+# Copy application code to the container image.
+# Note: files listed in .gitignore are not copied
+# (e.g.secret files)
+COPY . .
 
-EXPOSE 3000
+# Pre-compile Rails assets (master key needed)
+RUN RAILS_ENV=production bundle exec rake assets:precompile
 
-RUN export DATABASE_HOST=10.138.0.5
-RUN export DATABASE_USERNAME=postgres
-RUN export DATABASE_PASSWORD=7kq27.3519a
+# Set Google App Credentials environment variable with Service Account
+ENV GOOGLE_APPLICATION_CREDENTIALS=/usr/src/app/config/ticket_topia_runner.key
 
-CMD ["RAILS_ENV=production", "bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+# Setup Rails DB password passed on docker command line (see Cloud Build file)
+ARG DB_PWD
+ENV DATABASE_PASSWORD=${DB_PWD}
 
+# For now we don't have a Nginx/Apache frontend so tell 
+# the Puma HTTP server to serve static content
+# (e.g. CSS and Javascript files)
+ENV RAILS_SERVE_STATIC_FILES=true
+
+# Redirect Rails log to STDOUT for Cloud Run to capture
+ENV RAILS_LOG_TO_STDOUT=true
+
+# Designate the initial sript to run on container startup
+RUN chmod +x /usr/src/app/entrypoint.sh
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
